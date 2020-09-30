@@ -99,17 +99,7 @@ class App extends Component {
         })
       }
 
-      updateNewNoteData = (input, value) => {
-        this.setState({
-          newNote: {
-              ...this.state.newNote,
-            [input]: {
-              touched: true,
-              value: value,
-            },
-          },
-        })
-      }
+    
     
 
     renderNavRoutes() {
@@ -160,6 +150,8 @@ class App extends Component {
             handleAddNote: this.handleAddNote,
             updateNewNoteData: this.updateNewNoteData
         };
+
+        console.log(this.state.notes)
         return (
             <ApiContext.Provider value={value}>
                 <div className="App">

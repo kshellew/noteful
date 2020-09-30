@@ -20,7 +20,7 @@ export default class AddNote extends Component {
                 const newNote = {
                   name: event.target.name.value,
                   content: event.target.content.value,
-                  folder_id: event.target.folders.value,
+                  folderId: event.target.folders.value,
                   modified: new Date(),
                 }
                 console.log(newNote);
@@ -40,16 +40,29 @@ export default class AddNote extends Component {
              body: JSON.stringify(note),
         })
              .then(response => {
-             console.log(JSON.stringify(note))
+             if (!response.ok){
+                  throw new Error ('Sorry, we could not add note')
+             } 
              return response.json()
              })
              .then(responseJSON => this.context.handleAddNote(responseJSON))
+             .catch (error =>console.log(error))
         }
        
-        validateName = () => {
+        validateName() {
           if (this.context.newNote.name.value.length === 0) {
             return 'Name is required'
-          }
+          } else if ( this.context.newNote.name.value.length < 3 ) {
+               return 'Name must be at least 3 characters.'
+             }
+        }
+
+        validateDescription() {
+          if (this.context.newNote.content.value.length === 0) {
+            return 'Description is required'
+          } else if ( this.context.newNote.content.value.length < 3 ) {
+               return 'Description must be at least 3 characters.'
+             }
         }
        
         render() {
@@ -58,7 +71,7 @@ export default class AddNote extends Component {
                     <h2 className='add-notes'>Add New Note</h2>
                     <form className="add-notes" onSubmit={event => this.handleNoteSubmit(event)}>
                          <label htmlFor="name">
-                              Name
+                              Name {' '}
                          </label>
                          <input
                               type="text"
@@ -69,11 +82,12 @@ export default class AddNote extends Component {
                               onChange={event =>
                               this.context.updateNewNoteData(event.target.name, event.target.value)
                               }
-                              required
-
                          />
+                         {this.context.newNote.name.touched && <p>{this.validateName()}</p>}
+                         <br />
+                         <br />
                          <label htmlFor="content">
-                              Description
+                              Description {' '}
                          </label>
                          <input
                               type="text"
@@ -84,9 +98,11 @@ export default class AddNote extends Component {
                               onChange={event =>
                               this.context.updateNewNoteData(event.target.name, event.target.value)
                               }
-                              required
                          />
-                         <label htmlFor="folders">Select a Folder</label>
+                         {this.context.newNote.content.touched && <p>{this.validateDescription()}</p>}
+                         <br />
+                         <br />
+                         <label htmlFor="folders">Select a Folder {' '}</label>
                          <select
                               name="folders"
                               id="folders"
@@ -95,8 +111,17 @@ export default class AddNote extends Component {
                          >
                               {this.getFolders()}
                          </select>
-                         <button type="submit">Submit</button>
-                         {this.context.newNote.name.touched && <p>{this.validateName()}</p>}
+                         <br />
+                         <br />
+                         <button 
+                              type="submit" 
+                              disabled={this.validateName() ||
+                                   this.validateDescription()
+                              }    
+                         
+                         >
+                              Submit
+                         </button>
                     </form>
                </div>
           )

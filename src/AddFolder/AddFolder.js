@@ -31,6 +31,7 @@ export default class AddFolder extends Component {
             return response.json();
           })
           .then(response => this.context.addFolder(response))
+          .catch (error => console.log(error))
         }
 
      updateFolder(event) {
